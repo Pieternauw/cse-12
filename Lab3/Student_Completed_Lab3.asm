@@ -15,28 +15,28 @@
 # Psuedocode:
 # Prompt loop:
 #	print prompt
-#	assign input to register s3
-#	check if s3 > 0 branch to exit if true
+#	assign input to register t1
+#	check if t1 > 0 branch to exit if true
 #	if false, print error and newline - branch to prompt loop again
 # Triangle creation
 #
-# assign 1 to register s4 for line counter
+# assign 1 to register t3 for line counter
 # Outer loop:
-#	check s4 > s3 - if true branch to exit loop
+#	check t3 > t1 - if true branch to exit loop
 #	if false write 0x2a (star character) to buffer
-#	assign 2 to register s5 for inner loop character counter and branch to inner loop
+#	assign 2 to register t4 for inner loop character counter and branch to inner loop
 # Inner loop:
-#	check s5 > s4 - if true branch to outer loop part 2
-#	if false, check s5 == s4 - if true branch to star placement
-#	if false, check s4 == s3 - if true branch to star placement
+#	check t4 > t3 - if true branch to outer loop part 2
+#	if false, check t4 == t3 - if true branch to star placement
+#	if false, check t3 == t1 - if true branch to star placement
 # 	if false, write 0x20 (space character) to buffer
-# 	increment s5 by 1 and branch to inner loop start again
+# 	increment t4 by 1 and branch to inner loop start again
 # Star placement:
 #	write 0x2a (star character) to buffer
-#	incrememnt s5 by 1 and branch back to inner loop start
+#	incrememnt t4 by 1 and branch back to inner loop start
 # Outer loop part 2:
 #	write to buffer 0x0a (newline character)
-#	increment s4 by 1
+#	increment t3 by 1
 #	return start of outer loop
 # Exit loop:
 #	empty
@@ -181,17 +181,17 @@
 	
 	#................ your code here..........................................................#
 	#0 value for > 0
-	li s2, 0
+	li t2, 0
 	#counter for base star loop
-	li s4 1
+	li t3 1
 	
 prompt_loop:
 	#take user input
 	print_str(prompt)
-	read_n(s3)
+	read_n(t1)
 	
 	#check if greater than 0
-	bgt s3, s2, prompt_exit
+	bgt t1, t2, prompt_exit
 prompt_update:
 	#print invalid string message if not greater
 	print_str(invalidMsg)
@@ -201,24 +201,24 @@ prompt_update:
 prompt_exit:
 
 outer_loop:
-	bgt s4, s3, outer_exit	#ln_no >= ln_cnt - don't go through loop
+	bgt t3, t1, outer_exit	#ln_no >= ln_cnt - don't go through loop
 	write_to_buffer(0x2a)	#if it isn't, place star
-	li s5 2			# inner loop counter
+	li t4 2			# inner loop counter
 	b inner_loop		#go to inner loop
 inner_loop:
-	bgt s5, s4, outer_end	#ch_inx (inner counter) >= ln_no - go to new line char and add to ln_np
-	beq s4, s5, place_star	#ch_inx == ln_no - place star
-	beq s3, s4, place_star	#ln_no == ln_cnt - place star
+	bgt t4, t3, outer_end	#ch_inx (inner counter) >= ln_no - go to new line char and add to ln_np
+	beq t3, t4, place_star	#ch_inx == ln_no - place star
+	beq t1, t3, place_star	#ln_no == ln_cnt - place star
 	write_to_buffer(0x20)	#else statement that places space
-	addi s5, s5, 1		#add 1 to ln_chx
+	addi t4, t4, 1		#add 1 to ln_chx
 	b inner_loop		#repeat this loop
 place_star:
 	write_to_buffer(0x2a)	#place star
-	addi s5, s5, 1		#add 1 to ln_chx
+	addi t4, t4, 1		#add 1 to ln_chx
 	b inner_loop		#repeat loop
 outer_end:
 	write_to_buffer(0x0a)	#write newline
-	addi s4, s4, 1		#add 1 to ln_no
+	addi t3, t3, 1		#add 1 to ln_no
 	b outer_loop		#back to start of outer loop
 outer_exit:
 
